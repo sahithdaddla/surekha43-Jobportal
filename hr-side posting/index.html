@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentHub - HR Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .module {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: slideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        .form-section {
+            margin-bottom: 35px;
+        }
+
+        .form-section h3 {
+            color: #2d3748;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .form-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-control.error {
+            border-color: #e53e3e;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 130px;
+            resize: none;
+        }
+
+        .btn {
+            padding: 16px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #718096, #4a5568);
+            color: white;
+            margin-left: 15px;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .module {
+                padding: 25px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TalentHub - HR Dashboard</h1>
+            <p>Post and Manage Job Openings</p>
+        </div>
+
+        <div class="module">
+            <form id="jobForm">
+                <div class="form-section">
+                    <h3>📋 Basic Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobTitle">Job Title *</label>
+                            <input type="text" id="jobTitle" class="form-control" required placeholder="e.g., Senior Software Engineer" maxlength="70">
+                            <div class="error-message" id="jobTitleError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company Name *</label>
+                            <input type="text" id="company" class="form-control" required placeholder="e.g., TechCorp Solutions" maxlength="70">
+                            <div class="error-message" id="companyError"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="department">Department</label>
+                            <input type="text" id="department" class="form-control" placeholder="e.g., Engineering" maxlength="70">
+                            <div class="error-message" id="departmentError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location *</label>
+                            <input type="text" id="location" class="form-control" required placeholder="e.g., San Francisco, CA" maxlength="70">
+                            <div class="error-message" id="locationError"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Job Category *</label>
+                            <select id="category" class="form-control" required>
+                                <option value="">Select Category</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Design">Design</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Human Resources">Human Resources</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="error-message" id="categoryError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="employmentStatus">Employment Status *</label>
+                            <select id="employmentStatus" class="form-control" required>
+                                <option value="">Select Status</option>
+                                <option value="Permanent">Permanent</option>
+                                <option value="Temporary">Temporary</option>
+                                <option value="Freelance">Freelance</option>
+                            </select>
+                            <div class="error-message" id="employmentStatusError"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>💼 Job Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobType">Job Type *</label>
+                            <select id="jobType" class="form-control" required>
+                                <option value="">Select Job Type</option>
+                                <option value="Full-time">Full-time</option>
+                                <option value="Part-time">Part-time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Remote">Remote</option>
+                            </select>
+                            <div class="error-message" id="jobTypeError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience">Experience Level *</label>
+                            <select id="experience" class="form-control" required>
+                                <option value="">Select Experience</option>
+                                <option value="Entry Level">Entry Level (0-2 years)</option>
+                                <option value="Mid Level">Mid Level (2-5 years)</option>
+                                <option value="Senior Level">Senior Level (5-10 years)</option>
+                                <option value="Executive">Executive (10+ years)</option>
+                            </select>
+                            <div class="error-message" id="experienceError"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="salaryMin">Minimum Salary (Rs.)</label>
+                            <input type="number" id="salaryMin" class="form-control" min="0" placeholder="80000">
+                            <div class="error-message" id="salaryMinError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="salaryMax">Maximum Salary (Rs.)</label>
+                            <input type="number" id="salaryMax" class="form-control" min="0" placeholder="120000">
+                            <div class="error-message" id="salaryMaxError"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Job Description *</label>
+                        <textarea id="description" class="form-control" rows="6" required placeholder="Describe the role, responsibilities, company culture, and what makes this opportunity exciting..." maxlength="10000"></textarea>
+                        <div class="error-message" id="descriptionError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="requirements">Requirements & Qualifications *</label>
+                        <textarea id="requirements" class="form-control" rows="5" required placeholder="List required qualifications, skills, experience, education, and any certifications..." maxlength="10000"></textarea>
+                        <div class="error-message" id="requirementsError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="skills">Key Skills (comma-separated)</label>
+                        <input type="text" id="skills" class="form-control" placeholder="JavaScript, React, Node.js, MongoDB, AWS" maxlength="1000">
+                        <div class="error-message" id="skillsError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="benefits">Benefits (comma-separated)</label>
+                        <input type="text" id="benefits" class="form-control" placeholder="Health Insurance, 401(k), Paid Time Off, Remote Work" maxlength="1000">
+                        <div class="error-message" id="benefitsError"></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>📧 Application Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="deadline">Application Deadline</label>
+                            <input type="date" id="deadline" class="form-control">
+                            <div class="error-message" id="deadlineError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Contact Email *</label>
+                            <input type="email" id="contactEmail" class="form-control" required placeholder="hr@company.com">
+                            <div class="error-message" id="contactEmailError"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 50px;">
+                    <button type="submit" class="btn btn-primary">🚀 Post Job Opening</button>
+                    <button type="reset" class="btn btn-secondary">🔄 Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Validation configuration
+        const fieldConfigs = {
+            jobTitle: { maxLength: 70, required: true },
+            company: { maxLength: 70, required: true },
+            department: { maxLength: 70, required: false },
+            location: { maxLength: 70, required: true },
+            category: { required: true },
+            employmentStatus: { required: true },
+            jobType: { required: true },
+            experience: { required: true },
+            salaryMin: { required: false },
+            salaryMax: { required: false },
+            description: { maxLength: 10000, required: true },
+            requirements: { maxLength: 10000, required: true },
+            skills: { maxLength: 1000, required: false },
+            benefits: { maxLength: 1000, required: false },
+            deadline: { required: false },
+            contactEmail: { required: true }
+        };
+
+        // Initialize form and elements
+        const form = document.getElementById('jobForm');
+        const inputs = form.querySelectorAll('.form-control');
+
+        // Add input event listeners for real-time validation
+        inputs.forEach(input => {
+            input.addEventListener('input', () => validateField(input));
+            input.addEventListener('blur', () => validateField(input));
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (validateForm()) {
+                const formData = {
+                    title: document.getElementById('jobTitle').value,
+                    company: document.getElementById('company').value,
+                    department: document.getElementById('department').value,
+                    location: document.getElementById('location').value,
+                    category: document.getElementById('category').value,
+                    employmentStatus: document.getElementById('employmentStatus').value,
+                    type: document.getElementById('jobType').value,
+                    experience: document.getElementById('experience').value,
+                    salaryMin: document.getElementById('salaryMin').value,
+                    salaryMax: document.getElementById('salaryMax').value,
+                    description: document.getElementById('description').value,
+                    requirements: document.getElementById('requirements').value,
+                    skills: document.getElementById('skills').value,
+                    benefits: document.getElementById('benefits').value,
+                    deadline: document.getElementById('deadline').value,
+                    contactEmail: document.getElementById('contactEmail').value,
+                    postedDate: new Date().toISOString()
+                };
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/jobs', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to post job');
+                    }
+
+                    const submitBtn = document.querySelector('.btn-primary');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '✅ Job Posted Successfully!';
+                    submitBtn.style.background = 'linear-gradient(45deg, #48bb78, #38a169)';
+
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+                        form.reset();
+                        clearErrors();
+                    }, 2000);
+
+                    showSuccessMessage();
+                } catch (error) {
+                    console.error('Error posting job:', error);
+                    showErrorMessage('Failed to post job. Please try again.');
+                }
+            }
+        });
+
+        // Set minimum date for deadline
+        document.getElementById('deadline').min = new Date().toISOString().split('T')[0];
+
+        // Validation functions
+        function validateField(input) {
+            const value = input.value.trim();
+            const config = fieldConfigs[input.id];
+            const errorElement = document.getElementById(`${input.id}Error`);
+            
+            // Clear previous error
+            input.classList.remove('error');
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+
+            // Check for empty or only spaces
+            if (config.required && !value) {
+                showError(input, errorElement, 'This field is required');
+                return false;
+            }
+
+            // Check for multiple spaces
+            if (value && /\s{2,}/.test(value)) {
+                showError(input, errorElement, 'Only one space is allowed between words');
+                return false;
+            }
+
+            // Check max length
+            if (config.maxLength && value.length > config.maxLength) {
+                showError(input, errorElement, `Maximum ${config.maxLength} characters allowed`);
+                input.value = value.slice(0, config.maxLength);
+                return false;
+            }
+
+            // Email validation
+            if (input.type === 'email' && value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) {
+                    showError(input, errorElement, 'Please enter a valid email address');
+                    return false;
+                }
+            }
+
+            // Salary validation
+            if (input.id === 'salaryMax' && value) {
+                const salaryMin = document.getElementById('salaryMin').value;
+                if (salaryMin && Number(value) <= Number(salaryMin)) {
+                    showError(input, errorElement, 'Maximum salary must be greater than minimum salary');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function validateForm() {
+            let isValid = true;
+            inputs.forEach(input => {
+                if (!validateField(input)) {
+                    isValid = false;
+                }
+            });
+            return isValid;
+        }
+
+        function showError(input, errorElement, message) {
+            input.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearErrors() {
+            inputs.forEach(input => {
+                const errorElement = document.getElementById(`${input.id}Error`);
+                input.classList.remove('error');
+                errorElement.style.display = 'none';
+                errorElement.textContent = '';
+            });
+        }
+
+        // Success message
+        function showSuccessMessage() {
+            const successDiv = document.createElement('div');
+            successDiv.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(45deg, #48bb78, #38a169);
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
+                    z-index: 1001;
+                    animation: slideInRight 0.5s ease;
+                ">
+                    ✅ Job posted successfully!
+                </div>
+            `;
+            document.body.appendChild(successDiv);
+
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // Error message
+        function showErrorMessage(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(45deg, #e53e3e, #c53030);
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    box-shadow: 0 10px 30px rgba(229, 62, 62, 0.3);
+                    z-index: 1001;
+                    animation: slideInRight 0.5s ease;
+                ">
+                    ⚠️ ${message}
+                </div>
+            `;
+            document.body.appendChild(errorDiv);
+
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 3000);
+        }
+
+        // Add CSS animation for messages
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Real-time space prevention
+        inputs.forEach(input => {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === ' ') {
+                    const value = input.value;
+                    const cursorPos = input.selectionStart;
+                    
+                    // Prevent space at start
+                    if (cursorPos === 0) {
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    // Prevent multiple spaces
+                    if (value[cursorPos - 1] === ' ') {
+                        e.preventDefault();
+                        return;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
