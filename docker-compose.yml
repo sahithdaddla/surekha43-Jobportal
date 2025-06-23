@@ -1,0 +1,64 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: job43-postgres
+    restart: unless-stopped
+    ports:
+      - "5461:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: job_portal_db
+    volumes:
+      - pgdata_job43:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks: [job-net]
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: job43-backend
+    restart: unless-stopped
+    depends_on: [postgres]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: job_portal_db
+      DB_USER: postgres
+      DB_PASSWORD: admin123
+      PORT: 3030
+    ports:
+      - "3030:3030"
+    networks: [job-net]
+
+  browsing-jobs:
+    build:
+      context: ./browsing-jobs
+      dockerfile: Dockerfile
+    container_name: job43-ui-browsing
+    restart: unless-stopped
+    depends_on: [backend]
+    ports:
+      - "8170:80"
+    networks: [job-net]
+
+  hr-side-posting:
+    build:
+      context: ./hr-side-posting
+      dockerfile: Dockerfile
+    container_name: job43-ui-hr
+    restart: unless-stopped
+    depends_on: [backend]
+    ports:
+      - "8171:80"
+    networks: [job-net]
+
+networks:
+  job-net:
+
+volumes:
+  pgdata_job43:
+
