@@ -701,7 +701,7 @@
 
                 container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-                const response = await fetch(`http://13.48.195.115:3030/api/jobs?${queryParams}`);
+                const response = await fetch(`http://16.171.151.154:3037/api/jobs?${queryParams}`);
                 if (!response.ok) throw new Error('Failed to fetch jobs');
                 const jobs = await response.json();
 
@@ -767,7 +767,7 @@
         // View job details in modal
         async function viewJobDetails(jobId) {
             try {
-                const response = await fetch(`http://13.48.195.115:3030/api/jobs/${jobId}`);
+                const response = await fetch(`http://16.171.151.154:3037/api/jobs/${jobId}`);
                 if (!response.ok) throw new Error('Job not found');
                 const job = await response.json();
 
