@@ -6,7 +6,7 @@ services:
     container_name: job43-postgres
     restart: unless-stopped
     ports:
-      - "5461:5432"
+      - "5606:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
@@ -29,9 +29,9 @@ services:
       DB_NAME: job_portal_db
       DB_USER: postgres
       DB_PASSWORD: admin123
-      PORT: 3030
+      PORT: 3606
     ports:
-      - "3030:3030"
+      - "3606:3606"
     networks: [job-net]
 
   browsing-jobs:
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
     depends_on: [backend]
     ports:
-      - "8170:80"
+      - "8611:80"
     networks: [job-net]
 
   hr-side-posting:
@@ -53,7 +53,7 @@ services:
     restart: unless-stopped
     depends_on: [backend]
     ports:
-      - "8171:80"
+      - "8612:80"
     networks: [job-net]
 
 networks:
